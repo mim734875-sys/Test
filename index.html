@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Lua Script Link Creator</title>
+<style>
+body { font-family: Arial; padding: 20px; max-width: 800px; margin: auto; }
+textarea { width: 100%; height: 250px; padding: 10px; font-size: 16px; }
+button { padding: 12px 25px; margin-top: 15px; font-size: 18px; cursor: pointer; }
+#result { margin-top: 20px; font-size: 18px; color: green; }
+</style>
+</head>
+<body>
+
+<h2>Tạo Raw Script (Giống Luarmor)</h2>
+<p>Nhập code Lua của bạn vào đây:</p>
+
+<textarea id="code" placeholder='print("Hello World")'></textarea>
+<br>
+<button onclick="generate()">Tạo Link Raw</button>
+
+<div id="result"></div>
+
+<script>
+async function generate() {
+  const code = document.getElementById("code").value;
+
+  if (!code) {
+    alert("Bạn chưa nhập code!");
+    return;
+  }
+
+  const res = await fetch("/api/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ code })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("result").innerHTML = `
+    <b>Link Raw của bạn:</b><br>
+    <a href="${data.link}" target="_blank">${data.link}</a><br><br>
+    <b>Loadstring Roblox:</b><br>
+    <code>loadstring(game:HttpGet("${data.link}"))()</code>
+  `;
+}
+</script>
+
+</body>
+</html>
